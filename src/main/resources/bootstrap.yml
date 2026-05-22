@@ -1,0 +1,43 @@
+server:
+  port: 35770
+spring:
+  application:
+    product: ESMP
+    name: partner-gateway
+    env: DEV
+    nacos: 172.16.3.32:8848
+  main:
+    allow-bean-definition-overriding: true
+    web-application-type: reactive
+  cloud:
+    loadbalancer:
+      ribbon: false
+    nacos:
+      config:
+        server-addr: ${spring.application.nacos}
+        namespace: ${spring.application.product}
+        group: ${spring.application.env}
+        file-extension: yaml
+      discovery:
+        server-addr: ${spring.application.nacos}
+        namespace: ${spring.application.product}
+        group: ${spring.application.env}
+    gateway:
+      discovery:
+        locator:
+          enabled: false
+    sentinel:
+      enabled: false
+management:
+  endpoints:
+    web:
+      exposure:
+        include: info,health
+  endpoint:
+    health:
+      show-details: always
+knife4j:
+  show-ui-envs: ${spring.application.env}
+feign:
+  sentinel:
+    enabled: false

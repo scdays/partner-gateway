@@ -1,0 +1,50 @@
+# Nacos Data ID: partner-gateway.yaml（Group = spring.application.env，如 DEV）
+# 公网 Partner 入口仅此服务；勿将 /internal/** 暴露到公网。
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: open-api-v1
+          uri: lb://open-api-service
+          predicates:
+            - Path=/api/open/v1/**
+          filters:
+            - StripPrefix=0
+
+        - id: oauth-token-root
+          uri: lb://open-api-service
+          predicates:
+            - Path=/oauth/token
+          filters:
+            - StripPrefix=0
+
+        - id: oauth-token-alias
+          uri: lb://open-api-service
+          predicates:
+            - Path=/api/open/v1/oauth/token
+          filters:
+            - StripPrefix=0
+
+        - id: open-api-service-swagger
+          uri: lb://open-api-service
+          predicates:
+            - Path=/open-api-service/**
+          filters:
+            - StripPrefix=1
+
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_UNIQUE
+
+partner:
+  gateway:
+    enabled: true
+    introspect-mode: redis
+    token-paths:
+      - /oauth/token
+      - /api/open/v1/oauth/token
+    strip-authorization: true
+    rate-limit:
+      enabled: false
+      default-qps: 100
+      window-seconds: 1

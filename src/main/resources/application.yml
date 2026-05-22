@@ -1,0 +1,59 @@
+spring:
+  jackson:
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd HH:mm:ss
+  cloud:
+    gateway:
+      routes:
+        - id: open-api-v1
+          uri: lb://open-api-service
+          predicates:
+            - Path=/api/open/v1/**
+        - id: oauth-token-root
+          uri: lb://open-api-service
+          predicates:
+            - Path=/oauth/token
+        - id: oauth-token-alias
+          uri: lb://open-api-service
+          predicates:
+            - Path=/api/open/v1/oauth/token
+        # Swagger 聚合：/{serviceId}/v2/api-docs → 下游（如 open-api-service）
+        - id: open-api-service-swagger
+          uri: lb://open-api-service
+          predicates:
+            - Path=/open-api-service/**
+          filters:
+            - StripPrefix=1
+  redis:
+    database: 3
+    host: 172.16.3.32
+    port: 6379
+    password: 8STRYXLCtn8
+
+# Partner 鉴权默认关闭；生产在 Nacos partner-gateway.yaml 设置 partner.gateway.enabled=true
+partner:
+  gateway:
+    enabled: true
+    path-prefix: /api/open/v1
+    token-paths:
+      - /oauth/token
+      - /api/open/v1/oauth/token
+    strip-authorization: true
+    introspect-mode: redis
+    jwt-validate-enabled: true
+    rate-limit:
+      enabled: false
+      default-qps: 100
+      window-seconds: 1
+
+# Knife4j 聚合文档（对齐 morningglory；仅 show-ui-envs 对应 Nacos group 开放）
+knife4j:
+  enable: true
+  show-ui-envs: ${spring.application.env}
+springfox:
+  documentation:
+    auto-startup: false
+
+logging:
+  level:
+    com.vtc.openplatform.gateway: info
