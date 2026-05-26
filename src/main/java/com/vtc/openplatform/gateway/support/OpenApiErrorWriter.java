@@ -1,6 +1,8 @@
 package com.vtc.openplatform.gateway.support;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.vtc.openplatform.gateway.PartnerGatewayConstants;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpHeaders;
@@ -43,7 +45,7 @@ public final class OpenApiErrorWriter {
         body.put(JSON_FIELD_DATA, null);
         body.put(JSON_FIELD_REQUEST_ID, requestId);
 
-        byte[] bytes = body.toJSONString().getBytes(StandardCharsets.UTF_8);
+        byte[] bytes = JSON.toJSONString(body, SerializerFeature.WriteMapNullValue).getBytes(StandardCharsets.UTF_8);
         DataBuffer buffer = response.bufferFactory().wrap(bytes);
         return response.writeWith(Mono.just(buffer));
     }

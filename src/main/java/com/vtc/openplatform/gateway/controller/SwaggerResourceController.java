@@ -3,7 +3,9 @@ package com.vtc.openplatform.gateway.controller;
 import com.alibaba.cloud.nacos.NacosDiscoveryProperties;
 import com.vtc.openplatform.gateway.component.CustomSwaggerResourceProvider;
 import com.vtc.openplatform.gateway.support.Knife4jEnvSupport;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.util.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,15 +28,18 @@ public class SwaggerResourceController {
 
     private final CustomSwaggerResourceProvider swaggerResourceProvider;
 
-    private final NacosDiscoveryProperties discoveryProperties;
+    private final ObjectProvider<NacosDiscoveryProperties> discoveryPropertiesProvider;
+
+    @Value("${spring.application.env:DEV}")
+    private String applicationEnv;
 
     @Value("#{'${knife4j.show-ui-envs:DEV}'.split(',')}")
     private List<String> showSwaggerUiEnvs;
 
     public SwaggerResourceController(CustomSwaggerResourceProvider swaggerResourceProvider,
-                                       NacosDiscoveryProperties discoveryProperties) {
+                                       ObjectProvider<NacosDiscoveryProperties> discoveryPropertiesProvider) {
         this.swaggerResourceProvider = swaggerResourceProvider;
-        this.discoveryProperties = discoveryProperties;
+        this.discoveryPropertiesProvider = discoveryPropertiesProvider;
     }
 
     @GetMapping("/configuration/security")
@@ -62,6 +67,14 @@ public class SwaggerResourceController {
     }
 
     private boolean isSwaggerEnv() {
-        return Knife4jEnvSupport.isSwaggerEnv(discoveryProperties.getGroup(), showSwaggerUiEnvs);
+        return Knife4jEnvSupport.isSwaggerEnv(resolveSwaggerEnv(), showSwaggerUiEnvs);
+    }
+
+    private String resolveSwaggerEnv() {
+        NacosDiscoveryProperties discoveryProperties = discoveryPropertiesProvider.getIfAvailable();
+        if (discoveryProperties != null && StringUtils.hasText(discoveryProperties.getGroup())) {
+            return discoveryProperties.getGroup();
+        }
+        return applicationEnv;
     }
 }

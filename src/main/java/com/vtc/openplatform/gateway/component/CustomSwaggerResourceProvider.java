@@ -5,6 +5,7 @@ import com.vtc.openplatform.gateway.PartnerGatewayConstants;
 import com.vtc.openplatform.gateway.support.Knife4jEnvSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.event.RefreshRoutesEvent;
 import org.springframework.cloud.gateway.route.RouteLocator;
@@ -12,6 +13,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import springfox.documentation.swagger.web.SwaggerResource;
 import springfox.documentation.swagger.web.SwaggerResourcesProvider;
 
@@ -34,7 +36,7 @@ public class CustomSwaggerResourceProvider implements SwaggerResourcesProvider {
 
     private final RouteLocator routeLocator;
 
-    private final NacosDiscoveryProperties discoveryProperties;
+    private final ObjectProvider<NacosDiscoveryProperties> discoveryPropertiesProvider;
 
     private final AtomicReference<List<SwaggerResource>> cachedResources =
             new AtomicReference<>(Collections.emptyList());
@@ -42,13 +44,16 @@ public class CustomSwaggerResourceProvider implements SwaggerResourcesProvider {
     @Value("${spring.application.name:partner-gateway}")
     private String applicationName;
 
+    @Value("${spring.application.env:DEV}")
+    private String applicationEnv;
+
     @Value("#{'${knife4j.show-ui-envs:DEV}'.split(',')}")
     private List<String> showSwaggerUiEnvs;
 
     public CustomSwaggerResourceProvider(RouteLocator routeLocator,
-                                         NacosDiscoveryProperties discoveryProperties) {
+                                         ObjectProvider<NacosDiscoveryProperties> discoveryPropertiesProvider) {
         this.routeLocator = routeLocator;
-        this.discoveryProperties = discoveryProperties;
+        this.discoveryPropertiesProvider = discoveryPropertiesProvider;
     }
 
     @PostConstruct
@@ -99,9 +104,17 @@ public class CustomSwaggerResourceProvider implements SwaggerResourcesProvider {
 
     @Override
     public List<SwaggerResource> get() {
-        if (!Knife4jEnvSupport.isSwaggerEnv(discoveryProperties.getGroup(), showSwaggerUiEnvs)) {
+        if (!Knife4jEnvSupport.isSwaggerEnv(resolveSwaggerEnv(), showSwaggerUiEnvs)) {
             return Collections.emptyList();
         }
         return cachedResources.get();
+    }
+
+    private String resolveSwaggerEnv() {
+        NacosDiscoveryProperties discoveryProperties = discoveryPropertiesProvider.getIfAvailable();
+        if (discoveryProperties != null && StringUtils.hasText(discoveryProperties.getGroup())) {
+            return discoveryProperties.getGroup();
+        }
+        return applicationEnv;
     }
 }
