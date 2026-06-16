@@ -25,7 +25,7 @@ spring:
           filters:
             - StripPrefix=1
   redis:
-    database: 3
+    database: 2
     host: 172.16.3.32
     port: 6379
     password: 8STRYXLCtn8
@@ -41,6 +41,8 @@ partner:
     strip-authorization: true
     introspect-mode: redis
     jwt-validate-enabled: true
+    cors:
+      enabled: true
     rate-limit:
       enabled: false
       default-qps: 100

@@ -99,7 +99,9 @@ public class CustomSwaggerResourceProvider implements SwaggerResourcesProvider {
             }
         }
         cachedResources.set(Collections.unmodifiableList(resources));
-        LOGGER.info("Swagger 聚合已刷新，下游: {}", routeHosts);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Swagger 聚合已刷新，下游: {}", routeHosts);
+        }
     }
 
     @Override

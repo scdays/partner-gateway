@@ -19,7 +19,8 @@ public class PartnerCapabilityMatcher {
     private static final AntPathMatcher PATH_MATCHER = new AntPathMatcher();
 
     private static final List<CapabilityRule> RULES = Collections.unmodifiableList(Arrays.asList(
-            rule(HttpMethod.POST, "/api/open/v1/tasks", PartnerCapability.TASK_WRITE),
+            rule(HttpMethod.POST, "/api/open/v1/tasks/vul", PartnerCapability.TASK_WRITE),
+            rule(HttpMethod.POST, "/api/open/v1/tasks/file", PartnerCapability.TASK_WRITE),
             rule(HttpMethod.GET, "/api/open/v1/tasks", PartnerCapability.TASK_READ),
             rule(HttpMethod.GET, "/api/open/v1/tasks/*", PartnerCapability.TASK_READ),
             rule(HttpMethod.POST, "/api/open/v1/instances/search", PartnerCapability.INSTANCE_READ),
@@ -27,6 +28,7 @@ public class PartnerCapabilityMatcher {
             rule(HttpMethod.POST, "/api/open/v1/instances/*/verify", PartnerCapability.INSTANCE_VERIFY),
             rule(HttpMethod.POST, "/api/open/v1/instances/verify:batch", PartnerCapability.INSTANCE_VERIFY),
             rule(HttpMethod.POST, "/api/open/v1/instances/*/remediate", PartnerCapability.INSTANCE_REMEDIATE),
+            rule(HttpMethod.POST, "/api/open/v1/instances/remediate:batch", PartnerCapability.INSTANCE_REMEDIATE),
             rule(HttpMethod.POST, "/api/open/v1/instances/*/archive", PartnerCapability.INSTANCE_ARCHIVE),
             rule(HttpMethod.POST, "/api/open/v1/instances/*/verify-fix", PartnerCapability.INSTANCE_VERIFY_FIX),
             rule(HttpMethod.POST, "/api/open/v1/instances/verify-fix:batch", PartnerCapability.INSTANCE_VERIFY_FIX),

@@ -44,6 +44,15 @@ public class PartnerGatewayProperties {
 
     private RateLimit rateLimit = new RateLimit();
 
+    private Cors cors = new Cors();
+
+    @Data
+    public static class Cors {
+
+        /** 浏览器联调跨域；第三方服务端调用可关闭 */
+        private boolean enabled = true;
+    }
+
     @Data
     public static class RateLimit {
 
