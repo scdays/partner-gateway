@@ -106,10 +106,15 @@ public class CustomSwaggerResourceProvider implements SwaggerResourcesProvider {
 
     @Override
     public List<SwaggerResource> get() {
-        if (!Knife4jEnvSupport.isSwaggerEnv(resolveSwaggerEnv(), showSwaggerUiEnvs)) {
+        if (!isSwaggerEnv()) {
             return Collections.emptyList();
         }
         return cachedResources.get();
+    }
+
+    private boolean isSwaggerEnv() {
+        return Knife4jEnvSupport.isSwaggerEnv(resolveSwaggerEnv(), showSwaggerUiEnvs)
+                || Knife4jEnvSupport.isSwaggerEnv(applicationEnv, showSwaggerUiEnvs);
     }
 
     private String resolveSwaggerEnv() {

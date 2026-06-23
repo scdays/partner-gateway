@@ -13,5 +13,6 @@ public enum PartnerCapability {
     INSTANCE_ARCHIVE,
     INSTANCE_VERIFY_FIX,
     EXPORT_READ,
+    ARTIFACT_READ,
     EVENT_SUBSCRIBE
 }

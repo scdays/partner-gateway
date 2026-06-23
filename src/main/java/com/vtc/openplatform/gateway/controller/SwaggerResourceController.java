@@ -6,7 +6,6 @@ import com.vtc.openplatform.gateway.support.Knife4jEnvSupport;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StringUtils;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -67,7 +66,8 @@ public class SwaggerResourceController {
     }
 
     private boolean isSwaggerEnv() {
-        return Knife4jEnvSupport.isSwaggerEnv(resolveSwaggerEnv(), showSwaggerUiEnvs);
+        return Knife4jEnvSupport.isSwaggerEnv(resolveSwaggerEnv(), showSwaggerUiEnvs)
+                || Knife4jEnvSupport.isSwaggerEnv(applicationEnv, showSwaggerUiEnvs);
     }
 
     private String resolveSwaggerEnv() {

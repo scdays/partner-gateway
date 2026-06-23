@@ -34,7 +34,11 @@ public class PartnerCapabilityMatcher {
             rule(HttpMethod.POST, "/api/open/v1/instances/verify-fix:batch", PartnerCapability.INSTANCE_VERIFY_FIX),
             rule(HttpMethod.GET, "/api/open/v1/exports/*", PartnerCapability.EXPORT_READ),
             rule(HttpMethod.GET, "/api/open/v1/exports/*/download", PartnerCapability.EXPORT_READ),
+            rule(HttpMethod.GET, "/api/open/v1/exports/*/artifacts", PartnerCapability.ARTIFACT_READ),
             rule(HttpMethod.GET, "/api/open/v1/tasks/*/exports", PartnerCapability.EXPORT_READ),
+            rule(HttpMethod.GET, "/api/open/v1/tasks/*/artifacts", PartnerCapability.ARTIFACT_READ),
+            rule(HttpMethod.GET, "/api/open/v1/artifacts/*", PartnerCapability.ARTIFACT_READ),
+            rule(HttpMethod.GET, "/api/open/v1/artifacts/*/download", PartnerCapability.ARTIFACT_READ),
             rule(HttpMethod.POST, "/api/open/v1/instances/*/unfixable-records", PartnerCapability.INSTANCE_ARCHIVE)
     ));
 
